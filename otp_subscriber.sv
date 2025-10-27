@@ -140,7 +140,7 @@ class otp_subscriber extends uvm_component;
             count_ip=0;
         end
         `uvm_info(get_type_name(), $sformatf("[%0t] I/P Coverage: user_in=%0d, user_latch=%0b, otp_latch=%0b", 
-                 $time, ip_trans.user_in, ip_trans.user_latch, ip_trans.otp_latch), UVM_HIGH);
+                 $time, ip_trans.user_in, ip_trans.user_latch, ip_trans.otp_latch), UVM_LOW);
       end
 
       forever begin
@@ -190,7 +190,7 @@ class otp_subscriber extends uvm_component;
             count_op=0;
         end
         `uvm_info(get_type_name(), $sformatf("[%0t] O/P Coverage: user_out=%0d, lfsr_out=%0d, an=%0b", 
-                 $time, op_trans.user_out, op_trans.lfsr_out, op_trans.an), UVM_HIGH);
+                 $time, op_trans.user_out, op_trans.lfsr_out, op_trans.an), UVM_LOW);
       end
     join
   endtask

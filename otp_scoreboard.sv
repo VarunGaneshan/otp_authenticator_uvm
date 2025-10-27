@@ -59,7 +59,7 @@ class otp_scoreboard extends uvm_scoreboard;
         clk_0_5hz = ~clk_0_5hz;
         count_05 = 0;
         `uvm_info(get_type_name(), $sformatf("[%0t] 0.5Hz clock toggled → Display mode: %s",
-                  clk_0_5hz ? "STATUS (L/U/E)" : "OTP DIGITS", $time), UVM_MEDIUM);
+                  clk_0_5hz ? "STATUS (L/U/E)" : "OTP DIGITS", $time), UVM_LOW);
       end
     end
   endtask
@@ -134,18 +134,18 @@ class otp_scoreboard extends uvm_scoreboard;
         forever begin
           @(posedge clk_2khz);
           ip_fifo.get(ip_trans);
-          `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b an=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch, ip_trans.an), UVM_HIGH);
+          `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b an=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch, ip_trans.an), UVM_LOW);
 
           // LFSR check (shown when 0.5 Hz = 0)
           if (!clk_0_5hz && ip_trans.otp_latch) begin
             op_fifo.get(op_trans);
-            `uvm_info(get_type_name(), $sformatf("[%0t] OP_TRANS(LFSR): an=%0d lfsr_out=%b", $time, op_trans.an, op_trans.lfsr_out), UVM_HIGH);
+            `uvm_info(get_type_name(), $sformatf("[%0t] OP_TRANS(LFSR): an=%0d lfsr_out=%b", $time, op_trans.an, op_trans.lfsr_out), UVM_LOW);
             dut_lfsr[op_trans.an] = op_trans.lfsr_out;
             lfsr_c++;
             if (lfsr_c == 3) begin
               if (lfsr_exp == dut_lfsr) begin
                 LFSR_PASS++;
-                `uvm_info(get_type_name(), $sformatf("[%0t] LFSR matched expected sequence", $time), UVM_MEDIUM);
+                `uvm_info(get_type_name(), $sformatf("[%0t] LFSR matched expected sequence", $time), UVM_LOW);
               end else begin
                 LFSR_FAIL++;
                 `uvm_warning(get_type_name(), $sformatf("[%0t] LFSR mismatch detected", $time));
@@ -156,7 +156,7 @@ class otp_scoreboard extends uvm_scoreboard;
 
           else if (!clk_0_5hz && ip_trans.user_latch && attempt < 3) begin
             op_fifo.get(op_trans);
-            `uvm_info(get_type_name(), $sformatf("[%0t] OP_TRANS(USER): an=%0d user_out=%b", $time, op_trans.an, op_trans.user_out), UVM_HIGH);
+            `uvm_info(get_type_name(), $sformatf("[%0t] OP_TRANS(USER): an=%0d user_out=%b", $time, op_trans.an, op_trans.user_out), UVM_LOW);
             dut_otp[op_trans.an] = op_trans.user_out;
             user_c++;
 
@@ -164,7 +164,7 @@ class otp_scoreboard extends uvm_scoreboard;
               if (dut_otp == dut_lfsr) begin
                 USER_OTP_PASS++;
                 attempt = 0;
-                `uvm_info(get_type_name(), $sformatf("[%0t] USER OTP matched LFSR sequence → UNLOCK check", $time), UVM_MEDIUM);
+                `uvm_info(get_type_name(), $sformatf("[%0t] USER OTP matched LFSR sequence → UNLOCK check", $time), UVM_LOW);
                 if (check_unlock_flag(op_trans.user_out, op_trans.an))
                   UNLOCK_PASS++;
                 else
@@ -204,7 +204,7 @@ class otp_scoreboard extends uvm_scoreboard;
                 if (expire) begin
                         if (check_expiry_flag(op_trans.lfsr_out, op_trans.an, attempt)) begin
                                 EXPIRY_PASS++;
-                                `uvm_info(get_type_name(), $sformatf("[%0t] Expiry condition PASS — 'E' detected", $time), UVM_MEDIUM);
+                                `uvm_info(get_type_name(), $sformatf("[%0t] Expiry condition PASS — 'E' detected", $time), UVM_LOW);
                         end else begin
                                 EXPIRY_FAIL++;
                                 `uvm_warning(get_type_name(), $sformatf("[%0t] Expiry check FAIL — expected 'E' not seen", $time));
@@ -269,7 +269,7 @@ class otp_scoreboard extends uvm_scoreboard;
             9: lfsr_exp[3] = 7'b0010000;
             default: lfsr_exp[3] = 7'b1111111;
           endcase
-          `uvm_info(get_type_name(), $sformatf("[%0t] Generated Expected LFSR: %p", $time, lfsr_exp), UVM_HIGH);
+          `uvm_info(get_type_name(), $sformatf("[%0t] Generated Expected LFSR: %p", $time, lfsr_exp), UVM_LOW);
         end
       end
     join_none

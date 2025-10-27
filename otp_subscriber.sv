@@ -189,7 +189,7 @@ class otp_subscriber extends uvm_component;
         if(count_op==3) begin
             count_op=0;
         end
-        `uvm_info(get_type_name(), $sformatf("[%0t] O/P Coverage: user_out=%0d, lfsr_out=%0d, an=%0b", 
+        `uvm_info(get_type_name(), $sformatf("[%0t] O/P Coverage: user_out=%b, lfsr_out=%b, an=%0d", 
                  $time, op_trans.user_out, op_trans.lfsr_out, op_trans.an), UVM_LOW);
       end
     join

@@ -31,6 +31,6 @@ class otp_passive_monitor extends uvm_monitor;
     mon_trans.user_out = vif.pas_mon_cb.user_out;
     mon_trans.lfsr_out = vif.pas_mon_cb.lfsr_out;
     mon_trans.an = vif.pas_mon_cb.an;
-    `uvm_info(get_type_name(), $sformatf("[%0t] Captured Outputs: user_out=%0d, lfsr_out=%0b, an=%0b", $time, mon_trans.user_out, mon_trans.lfsr_out, mon_trans.an), UVM_LOW);
+    `uvm_info(get_type_name(), $sformatf("[%0t] Captured Outputs: user_out=%b, lfsr_out=%b, an=%0d", $time, mon_trans.user_out, mon_trans.lfsr_out, mon_trans.an), UVM_LOW);
   endtask
 endclass

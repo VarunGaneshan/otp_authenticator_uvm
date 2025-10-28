@@ -2,7 +2,6 @@
 
 import uvm_pkg::*;
 `include "uvm_macros.svh"
-`include "project_configs.sv"
 `include "otp_if.sv"
 `include "top.v"
   `include "otp_sequence_item.sv"

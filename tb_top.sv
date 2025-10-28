@@ -27,8 +27,7 @@ module tb_top;
 
   initial begin
     clk = 1'b0;
-    reset_n = 1'b1; 
-    #10 reset_n = 1'b0; 
+    reset_n = 1'b0; 
     #20 reset_n = 1'b1;
   end
 

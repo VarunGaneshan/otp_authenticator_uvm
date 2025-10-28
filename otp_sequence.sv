@@ -9,7 +9,7 @@ class otp_latch_sequence extends uvm_sequence #(otp_seq_item);
     otp_seq_item item;
     item = otp_seq_item::type_id::create("latch");
     start_item(item);
-    item.randomize() with {otp_latch == 1;user_latch == 0;};
+    item.randomize() with {otp_latch == 1;};
     `uvm_info(get_type_name(), $sformatf("[%0t] Driving OTP Latch: otp_latch=%0b, user_latch=%0b", $time, item.otp_latch, item.user_latch), UVM_LOW);
     finish_item(item);
     item = otp_seq_item::type_id::create("latch");

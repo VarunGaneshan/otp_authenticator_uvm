@@ -228,7 +228,7 @@ class otp_scoreboard extends uvm_scoreboard;
             7: lfsr_exp[0] = 7'b1111000;
             8: lfsr_exp[0] = 7'b0000000;
             9: lfsr_exp[0] = 7'b0010000;
-            default: lfsr_exp[3] = 7'b1111111;
+            default: lfsr_exp[0] = 7'b1111111;
           endcase
           case(lfsr_reg[7:4])
             0: lfsr_exp[1] = 7'b1000000;

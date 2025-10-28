@@ -24,7 +24,7 @@ class otp_base_test extends uvm_test;
     user_in_seq = otp_input_sequence::type_id::create("user_in_seq");
     otp_seq.start(env.active_agent.sequencer);
     user_in_seq.start(env.active_agent.sequencer);
-    #3s;
+    #10s;
     
     phase.drop_objection(this);
   endtask

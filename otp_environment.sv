@@ -12,8 +12,8 @@ class otp_env extends uvm_env;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    passive_agent = otp_passive_agent::type_id::create("passive_agent", this);
-    active_agent = otp_active_agent::type_id::create("active_agent", this);
+    passive_agent = otp_passive_agent::type_id::create("passive_agent", this); 
+    active_agent = otp_active_agent::type_id::create("active_agent", this); 
     scoreboard = otp_scoreboard::type_id::create("scoreboard", this);
     subscriber = otp_subscriber::type_id::create("subscriber", this);
   endfunction

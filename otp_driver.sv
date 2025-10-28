@@ -3,7 +3,7 @@ class otp_driver extends uvm_driver #(otp_seq_item);
   virtual otp_if vif;
   otp_seq_item drv_trans;
   
-  function new(string name = "otp_driver", uvm_component parent = null);
+  function new(string name = "otp_drv", uvm_component parent = null);
     super.new(name, parent);
   endfunction
   
@@ -15,11 +15,11 @@ class otp_driver extends uvm_driver #(otp_seq_item);
   
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
-	    if(!vif.drv_cb.reset_n)begin// wait until reset is de-asserted then drive inputs
-				`uvm_info(get_type_name(),$sformatf("[%0t] DUT is in RESET=%0b !!!",$time,vif.drv_cb.reset_n),UVM_LOW);
-				@(posedge vif.drv_cb.reset_n);
-		end
-    @(vif.drv_cb);
+	   /* if(!vif.reset_n)begin// wait until reset is de-asserted then drive inputs
+				`uvm_info(get_type_name(),$sformatf("[%0t] DUT is in RESET=%0b !!!",$time,vif.reset_n),UVM_LOW);
+				@(posedge vif.reset_n);
+		end*/
+    repeat(2) @(vif.drv_cb);
     forever begin
       seq_item_port.get_next_item(drv_trans);
       drive_transaction(drv_trans);
@@ -28,7 +28,6 @@ class otp_driver extends uvm_driver #(otp_seq_item);
   endtask
 
   task drive_transaction(otp_seq_item trans);
-	@(posedge vif.drv_cb);
 	vif.drv_cb.user_in <= trans.user_in;
 	vif.drv_cb.otp_latch <= trans.otp_latch;
 	vif.drv_cb.user_latch <= trans.user_latch;

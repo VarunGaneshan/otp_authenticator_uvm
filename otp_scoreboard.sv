@@ -20,12 +20,13 @@ class otp_scoreboard extends uvm_scoreboard;
   bit [15:0] lfsr_reg;
   bit [6:0] lfsr_exp [4]; //should be outside begin-end
   int attempt;
+  bit flag_1s = 1;
   bit first_time = 1;
   uvm_tlm_analysis_fifo #(otp_seq_item) ip_fifo;
   uvm_tlm_analysis_fifo #(otp_seq_item) op_fifo;
- 
-  function new(string name="otp_scoreboard", uvm_component parent=null);
-    super.new(name, parent);
+  
+  function new(string name="otp_scoreboard", uvm_component parent=null); 
+    super.new(name, parent);   
     ip_fifo = new("ip_fifo", this);
     op_fifo = new("op_fifo", this);
  
@@ -61,12 +62,14 @@ class otp_scoreboard extends uvm_scoreboard;
         clk_2khz = ~clk_2khz;
         count_2k = 0;
       end
-      if (count_0_25 >= CLK_0_25HZ_DIV) begin
+      if (count_0_5 >= CLK_0_5HZ_DIV && flag_1s==1)begin
+        flag_1s=0;
+      end
+      else if (count_0_25 >= CLK_0_25HZ_DIV && flag_1s==0) begin
         clk_0_25hz = ~clk_0_25hz;
         count_0_25 = 0;
-        `uvm_info(get_type_name(), $sformatf("[%0t] 0.5Hz clock toggled → Display mode: %s",
-                  clk_0_25hz ? "STATUS (L/U/E)" : "OTP DIGITS", $time), UVM_LOW);
       end
+       // `uvm_info(get_type_name(), $sformatf("[%0t] 0.25Hz clock toggled → Display mode: %s", $time, clk_0_25hz ? "STATUS (L/U/E)" : "OTP DIGITS"), UVM_LOW);
     end
   endtask
  
@@ -138,9 +141,8 @@ class otp_scoreboard extends uvm_scoreboard;
         int lfsr_c = 0, user_c = 0;
  
         forever begin
-          @(posedge clk_2khz);// check
           ip_fifo.get(ip_trans);
-          `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b an=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch, ip_trans.an), UVM_LOW);
+          `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b", $time, ip_trans.otp_latch, ip_trans.user_latch), UVM_LOW);
  
           // LFSR check (shown when 0.5 Hz = 0)
           if (!clk_0_25hz && ip_trans.otp_latch) begin
@@ -170,39 +172,41 @@ class otp_scoreboard extends uvm_scoreboard;
               if (dut_otp == dut_lfsr) begin
                 USER_OTP_PASS++;
                 attempt = 0;
-                `uvm_info(get_type_name(), $sformatf("[%0t] USER OTP matched LFSR sequence → UNLOCK check", $time), UVM_LOW);
-                wait(op_trans.an == 0 && clk_0_25hz == 1);
-                if (check_unlock_flag(op_trans.lfsr_out, op_trans.an))
-                  UNLOCK_PASS++;
-                else
-                  UNLOCK_FAIL++;
+                `uvm_info(get_type_name(), $sformatf("[%0t] USER OTP matched LFSR sequence - UNLOCK check", $time), UVM_LOW);
+                if (op_trans.an == 0 && clk_0_25hz == 1) begin
+                  if (check_unlock_flag(op_trans.lfsr_out, op_trans.an))
+                    UNLOCK_PASS++;
+                  else
+                    UNLOCK_FAIL++;
+                end
+              end
               end else begin
                 USER_OTP_FAIL++;
                 attempt++;
                 `uvm_warning(get_type_name(), $sformatf("[%0t] OTP mismatch | Attempt #%0d", $time, attempt));
-                if(first_time == 1)begin
-                  wait(op_trans.an == 1 && clk_0_5hz == 1);
-                  if (check_attempt_display(op_trans.lfsr_out, 1, attempt))
-                  ATTEMPT_PASS++;
-                  else
-                  ATTEMPT_FAIL++;
-                  first_time = 0;
-                end
+                if(flag_1s == 1)begin
+                  if(op_trans.an == 1 && clk_0_5hz == 1)begin
+                    if (check_attempt_display(op_trans.lfsr_out, 1, attempt))
+                        ATTEMPT_PASS++;
+                     else
+                        ATTEMPT_FAIL++;
+                  end
+                end 
                 else begin
-                wait(op_trans.an == 1 && clk_0_25hz == 1);
-                if (check_attempt_display(op_trans.lfsr_out, 1, attempt))
-                  ATTEMPT_PASS++;
-                else
-                  ATTEMPT_FAIL++;
-                end
- 
-                if (attempt >= 3) begin
-                  `uvm_info(get_type_name(), $sformatf("[%0t] 3 failed attempts → Checking LOCK", $time), UVM_LOW);
-                  wait(op_trans.an == 0 && clk_0_25hz == 1);
-                  if (check_lock_flag(op_trans.lfsr_out, op_trans.an))
-                    LOCK_PASS++;
+                if (op_trans.an == 1 && clk_0_25hz == 1) begin
+                  if (check_attempt_display(op_trans.lfsr_out, 1, attempt))
+                    ATTEMPT_PASS++;
                   else
-                    LOCK_FAIL++;
+                    ATTEMPT_FAIL++;
+                  end
+                end
+                if (attempt >= 3) begin
+                  `uvm_info(get_type_name(), $sformatf("[%0t] 3 failed attempts - Checking LOCK", $time), UVM_LOW);
+                  if(op_trans.an == 0 && clk_0_25hz == 1)begin
+                    if (check_lock_flag(op_trans.lfsr_out, op_trans.an))
+                      LOCK_PASS++;
+                    else
+                      LOCK_FAIL++;
                 end
               end
               user_c = 0;
@@ -211,7 +215,7 @@ class otp_scoreboard extends uvm_scoreboard;
         end
       end
  
-      begin
+      /*begin
         bit expire;
         forever begin
           ip_fifo.peek(ip_trans);
@@ -220,17 +224,21 @@ class otp_scoreboard extends uvm_scoreboard;
             @(vif.sb_cb);
                 start_timer(vif.clk, expire);
                 if (expire) begin
-                        wait(op_trans.an == 0 && clk_0_25hz == 1);
-                        if (check_expiry_flag(op_trans.lfsr_out, op_trans.an)) begin
-                                EXPIRY_PASS++;
-                                `uvm_info(get_type_name(), $sformatf("[%0t] Expiry condition PASS — 'E' detected", $time), UVM_LOW);
-                        end else begin
-                                EXPIRY_FAIL++;
-                                `uvm_warning(get_type_name(), $sformatf("[%0t] Expiry check FAIL — expected 'E' not seen", $time));
+                  while(op_trans.an != 0) begin
+                    op_fifo.peek(op_trans);
+
+                        if(op_trans.an == 0 && clk_0_25hz == 1)begin
+                          if (check_expiry_flag(op_trans.lfsr_out, op_trans.an)) begin
+                                  EXPIRY_PASS++;
+                                  `uvm_info(get_type_name(), $sformatf("[%0t] Expiry condition PASS — 'E' detected", $time), UVM_LOW);
+                          end else begin
+                                  EXPIRY_FAIL++;
+                                  `uvm_warning(get_type_name(), $sformatf("[%0t] Expiry check FAIL — expected 'E' not seen", $time));
+                          end
                         end
                 end
         end
-      end
+      end*/
  
       begin
         forever begin
@@ -288,7 +296,7 @@ class otp_scoreboard extends uvm_scoreboard;
             9: lfsr_exp[3] = 7'b0010000;
             default: lfsr_exp[3] = 7'b1111111;
           endcase
-          `uvm_info(get_type_name(), $sformatf("[%0t] Generated Expected LFSR: %p", $time, lfsr_exp), UVM_LOW);
+          //`uvm_info(get_full_name(), $sformatf("[%0t] Generated Expected LFSR: %p", $time, lfsr_exp), UVM_HIGH);
         end
       end
     join_none

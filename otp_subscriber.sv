@@ -9,32 +9,32 @@ class otp_subscriber extends uvm_component;
     uvm_tlm_analysis_fifo #(otp_seq_item) op_fifo;
 
   covergroup ip_cg;
-        user_in_d0: coverpoint ip_trans.user_in iff(count_ip==0) {
+        user_in_d0: coverpoint ip_trans.user_in iff(count_ip==0 && ip_trans.user_latch) {
             bins valid_low   = {[0:2]};    // S bins: 0-2
             bins valid_mid   = {[3:5]};    // M bins: 3-5
             bins valid_high  = {[6:9]};    // L bins: 6-9
             illegal_bins illegal_digits  = {[10:15]};  // Illegal bins
         }
-        user_in_d1: coverpoint ip_trans.user_in iff(count_ip==1) {
+        user_in_d1: coverpoint ip_trans.user_in iff(count_ip==1 && ip_trans.user_latch) {
             bins valid_low   = {[0:2]};    // S bins: 0-2
             bins valid_mid   = {[3:5]};    // M bins: 3-5
             bins valid_high  = {[6:9]};    // L bins: 6-9
             illegal_bins illegal_digits  = {[10:15]};  // Illegal bins
         }
-        user_in_d2: coverpoint ip_trans.user_in iff(count_ip==2) {
+        user_in_d2: coverpoint ip_trans.user_in iff(count_ip==2 && ip_trans.user_latch) {
             bins valid_low   = {[0:2]};    // S bins: 0-2
             bins valid_mid   = {[3:5]};    // M bins: 3-5
             bins valid_high  = {[6:9]};    // L bins: 6-9
             illegal_bins illegal_digits  = {[10:15]};  // Illegal bins
         }
-        user_in_d3: coverpoint ip_trans.user_in iff(count_ip==3) {
+        user_in_d3: coverpoint ip_trans.user_in iff(count_ip==3 && ip_trans.user_latch) {
             bins valid_low   = {[0:2]};    // S bins: 0-2
             bins valid_mid   = {[3:5]};    // M bins: 3-5
             bins valid_high  = {[6:9]};    // L bins: 6-9
             illegal_bins illegal_digits  = {[10:15]};  // Illegal bins
         }
         
-        user_in: coverpoint ip_trans.user_in {
+        user_in: coverpoint ip_trans.user_in iff(ip_trans.user_latch) {
             bins valid_low   = {[0:2]};    // S bins: 0-2
             bins valid_mid   = {[3:5]};    // M bins: 3-5
             bins valid_high  = {[6:9]};    // L bins: 6-9
@@ -55,7 +55,7 @@ class otp_subscriber extends uvm_component;
             bins latch_0_to_1_low = binsof(user_in.valid_low) && binsof(user_latch_transitions.latch_0_to_1);
             bins latch_0_to_1_mid = binsof(user_in.valid_mid) && binsof(user_latch_transitions.latch_0_to_1);
             bins latch_0_to_1_high = binsof(user_in.valid_high) && binsof(user_latch_transitions.latch_0_to_1);
-            ignore_bins latch_0_to_1_illegal = binsof(user_latch_transitions.latch_1_to_0);
+            illegal_bins latch_0_to_1_illegal = binsof(user_latch_transitions.latch_1_to_0);
         }
   endgroup
    
@@ -139,8 +139,8 @@ class otp_subscriber extends uvm_component;
         if(count_ip==3) begin
             count_ip=0;
         end
-        `uvm_info(get_type_name(), $sformatf("[%0t] I/P Coverage: user_in=%0d, user_latch=%0b, otp_latch=%0b", 
-                 $time, ip_trans.user_in, ip_trans.user_latch, ip_trans.otp_latch), UVM_LOW);
+        //`uvm_info(get_type_name(), $sformatf("[%0t] I/P Coverage: user_in=%0d, user_latch=%0b, otp_latch=%0b", 
+        //       $time, ip_trans.user_in, ip_trans.user_latch, ip_trans.otp_latch), UVM_HIGH);
       end
 
       forever begin
@@ -189,8 +189,8 @@ class otp_subscriber extends uvm_component;
         if(count_op==3) begin
             count_op=0;
         end
-        `uvm_info(get_type_name(), $sformatf("[%0t] O/P Coverage: user_out=%b, lfsr_out=%b, an=%0d", 
-                 $time, op_trans.user_out, op_trans.lfsr_out, op_trans.an), UVM_LOW);
+        //`uvm_info(get_type_name(), $sformatf("[%0t] O/P Coverage: user_out=%b, lfsr_out=%b, an=%0d", 
+        //         $time, op_trans.user_out, op_trans.lfsr_out, op_trans.an), UVM_HIGH);
       end
     join
   endtask

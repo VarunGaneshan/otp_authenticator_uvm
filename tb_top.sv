@@ -52,7 +52,7 @@ module tb_top;
   end
   
   initial begin
-    run_test();
+    run_test("otp_base_test");
     #100;
     $display("Simulation Finished");
     $finish;

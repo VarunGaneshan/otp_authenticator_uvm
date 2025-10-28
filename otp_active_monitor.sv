@@ -19,9 +19,9 @@ class otp_active_monitor extends uvm_monitor;
  
   virtual task run_phase(uvm_phase phase);
     super.run_phase(phase);
-    @(posedge vif.act_mon_cb.reset_n);
-    `uvm_info(get_type_name(), $sformatf("[%0t] Monitor: Reset De-asserted",$time), UVM_LOW);
-    @(vif.act_mon_cb);
+    //@(posedge vif.act_mon_cb.reset_n);
+    //`uvm_info(get_type_name(), $sformatf("[%0t] Monitor: Reset De-asserted",$time), UVM_LOW);
+    repeat(3) @(vif.act_mon_cb);
    
     forever begin
       monitor_dut();

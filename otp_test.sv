@@ -25,7 +25,6 @@ class otp_base_test extends uvm_test;
     otp_seq.start(env.active_agent.sequencer);
     user_in_seq.start(env.active_agent.sequencer);
     #3s;
-    
     phase.drop_objection(this);
   endtask
 endclass

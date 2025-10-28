@@ -217,7 +217,7 @@ class otp_scoreboard extends uvm_scoreboard;
         forever begin
           @(posedge vif.sb_cb or negedge vif.sb_cb.reset_n);
           lfsr_reg = gen_lfsr(vif.sb_cb.reset_n, vif.sb_cb.otp_latch);
-          case(lfsr_reg[15:12])
+          case(lfsr_reg[3:0])
             0: lfsr_exp[0] = 7'b1000000;
             1: lfsr_exp[0] = 7'b1111001;
             2: lfsr_exp[0] = 7'b0100100;
@@ -228,9 +228,9 @@ class otp_scoreboard extends uvm_scoreboard;
             7: lfsr_exp[0] = 7'b1111000;
             8: lfsr_exp[0] = 7'b0000000;
             9: lfsr_exp[0] = 7'b0010000;
-            default: lfsr_exp[0] = 7'b1111111;
+            default: lfsr_exp[3] = 7'b1111111;
           endcase
-          case(lfsr_reg[11:8])
+          case(lfsr_reg[7:4])
             0: lfsr_exp[1] = 7'b1000000;
             1: lfsr_exp[1] = 7'b1111001;
             2: lfsr_exp[1] = 7'b0100100;
@@ -243,7 +243,7 @@ class otp_scoreboard extends uvm_scoreboard;
             9: lfsr_exp[1] = 7'b0010000;
             default: lfsr_exp[1] = 7'b1111111;
           endcase
-          case(lfsr_reg[7:4])
+          case(lfsr_reg[11:8])
             0: lfsr_exp[2] = 7'b1000000;
             1: lfsr_exp[2] = 7'b1111001;
             2: lfsr_exp[2] = 7'b0100100;
@@ -256,7 +256,7 @@ class otp_scoreboard extends uvm_scoreboard;
             9: lfsr_exp[2] = 7'b0010000;
             default: lfsr_exp[2] = 7'b1111111;
           endcase
-          case(lfsr_reg[3:0])
+          case(lfsr_reg[15:12])
             0: lfsr_exp[3] = 7'b1000000;
             1: lfsr_exp[3] = 7'b1111001;
             2: lfsr_exp[3] = 7'b0100100;

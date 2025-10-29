@@ -21,10 +21,9 @@ class otp_active_monitor extends uvm_monitor;
     super.run_phase(phase);
     //@(posedge vif.act_mon_cb.reset_n);
     //`uvm_info(get_type_name(), $sformatf("[%0t] Monitor: Reset De-asserted",$time), UVM_LOW);
-    repeat(3) @(vif.act_mon_cb);
+    repeat(4) @(vif.act_mon_cb);
    
     forever begin
-      @(vif.act_mon_cb); // Sample on clock edge
       monitor_dut();
       mon_port.write(mon_trans);
       #1s; // Wait 1 second before next sample

@@ -31,7 +31,7 @@ class otp_driver extends uvm_driver #(otp_seq_item);
 	vif.drv_cb.user_in <= drv_trans.user_in;
 	vif.drv_cb.otp_latch <= drv_trans.otp_latch;
 	vif.drv_cb.user_latch <= drv_trans.user_latch;
-	@(vif.drv_cb); // Wait for the clocking block to update
+	//@(vif.drv_cb); // Wait for the clocking block to update
 	`uvm_info(get_type_name(), $sformatf("[%0t] Driving: user_in=%0d, otp_latch=%0b, user_latch=%0b",$time,
 			drv_trans.user_in, drv_trans.otp_latch, drv_trans.user_latch), UVM_LOW);
 	#1s; // Hold the signals for 1 second

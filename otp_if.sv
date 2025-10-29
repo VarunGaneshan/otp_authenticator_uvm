@@ -1,10 +1,10 @@
 interface otp_if(input bit clk, reset_n);
-	logic otp_latch;
-  logic user_latch;
-  logic [3:0] user_in;
-  logic [6:0] lfsr_out;
-  logic [6:0] user_out;
-  logic [1:0]an;
+	bit otp_latch;
+  bit user_latch;
+  bit [3:0] user_in;
+  bit [6:0] lfsr_out;
+  bit [6:0] user_out;
+  bit [1:0]an;
 
   clocking drv_cb @(posedge clk);
     default output #0;

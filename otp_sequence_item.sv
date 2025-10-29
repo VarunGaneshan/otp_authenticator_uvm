@@ -1,10 +1,10 @@
 class otp_seq_item extends uvm_sequence_item;
-  rand logic user_latch;
-  rand logic otp_latch;
-  rand logic [3:0] user_in;
-  logic [1:0] an;
-  logic [6:0] user_out;
-  logic [6:0] lfsr_out;
+  rand bit user_latch;
+  rand bit otp_latch;
+  rand bit [3:0] user_in;
+  bit [1:0] an;
+  bit [6:0] user_out;
+  bit [6:0] lfsr_out;
 
   function new(string name="otp_seq_item");
     super.new(name);

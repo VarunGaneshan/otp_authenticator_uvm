@@ -24,10 +24,10 @@ class otp_active_monitor extends uvm_monitor;
     repeat(3) @(vif.act_mon_cb);
    
     forever begin
+      @(vif.act_mon_cb); // Sample on clock edge
       monitor_dut();
       mon_port.write(mon_trans);
-      #1s;
-      //one_sec_delay();
+      #1s; // Wait 1 second before next sample
     end
   endtask            
     

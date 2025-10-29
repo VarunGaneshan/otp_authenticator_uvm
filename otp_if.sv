@@ -7,6 +7,7 @@ interface otp_if(input bit clk, reset_n);
   logic [1:0]an;
 
   clocking drv_cb @(posedge clk);
+    default output #0;
     input reset_n;
 	  output otp_latch;
     output user_latch;
@@ -14,6 +15,7 @@ interface otp_if(input bit clk, reset_n);
   endclocking 
   
   clocking act_mon_cb @(posedge clk);
+    default input #1step;
     input reset_n;
 	  input otp_latch;
     input user_latch;

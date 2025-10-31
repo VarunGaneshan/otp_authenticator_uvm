@@ -32,5 +32,8 @@ interface otp_if(input bit clk, reset_n);
   clocking sb_cb @(posedge clk);
     input reset_n;
     input otp_latch;
+    input lfsr_out;
+    input user_out;
+    input an;
   endclocking 
 endinterface

@@ -56,21 +56,18 @@ interface otp_assertions (
   endproperty
   assert_an_valid: assert property (an_valid_check)
     else $error("[ASSERTION] an signal is unknown at time %0t", $time);
-  
-  property lfsr_out_reset_check;
-    @(posedge clk) disable iff (reset_n) lfsr_out == 7'b1111111;
-  endproperty
-  assert_lfsr_out_reset: assert property (lfsr_out_reset_check)
-    else $error("[ASSERTION] lfsr_out is not reset to OFF state at time %0t", $time);
 
-  property user_out_reset_check;
-    @(posedge clk) disable iff (reset_n) user_out == 7'b1111111;
-  endproperty
-  assert_user_out_reset: assert property (user_out_reset_check)
-    else $error("[ASSERTION] user_out is not reset to OFF state at time %0t", $time);
+  wire #(1ps) reset_n_delay = reset_n;
 
-/*
-LFSR Condition	lfsr_out	 lfsr_out != 0
-Hold time check	lfsr_out	 Ensure Attempt.No and L/U/E status output holds for 5 seconds.
-*/
+   property reset_lfsr_out;
+    @(posedge reset_n_delay) (1'b1 |-> reset_n && lfsr_out == 7'b1111111)
+   endproperty
+    assert_reset_lfsr_out_assertion: assert property (reset_lfsr_out)
+      else $error("[ASSERTION] LFSR output not reset to all 1's at time %0t", $time);
+
+   property reset_user_out;
+    @(posedge reset_n_delay) (1'b1 |-> reset_n && user_out == 7'b1111111)
+  endproperty
+  assert_reset_user_out_assertion: assert property (reset_user_out)
+      else $error("[ASSERTION] User output not reset to all 1's at time %0t", $time);
 endinterface

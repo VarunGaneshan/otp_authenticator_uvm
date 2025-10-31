@@ -22,7 +22,7 @@ import uvm_pkg::*;
 module tb_top;
   bit clk,reset_n;
 
-  always #10 clk = ~ clk; //50MHz clock
+  always #10 clk = ~ clk; //50MHz clock,20ns tp
 
   initial begin
     clk = 1'b0;
@@ -45,15 +45,12 @@ module tb_top;
   );
 
   initial begin
-    uvm_config_db#(virtual otp_if)::set(null,"uvm_test_top.env.active_agent.driver","vif",intf);
     uvm_config_db#(virtual otp_if)::set(null,"uvm_test_top.env.active_agent.monitor","vif",intf);
+    uvm_config_db#(virtual otp_if)::set(null,"uvm_test_top.env.active_agent.driver","vif",intf);
     uvm_config_db#(virtual otp_if)::set(null,"uvm_test_top.env.passive_agent.monitor","vif",intf);
     uvm_config_db#(virtual otp_if)::set(null,"uvm_test_top.env.scoreboard","vif",intf);
-  end
-  
-  initial begin
-    run_test("otp_base_test");
-    #100;
+    run_test("otp_third_attempt_match_test");
+   #100;
     $display("Simulation Finished");
     $finish;
   end

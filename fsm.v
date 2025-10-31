@@ -53,12 +53,12 @@ module fsm(
             end
             
             GENERATE_OTP: if (lfsr_latch) begin
-                               otp <= lfsr_digit;  
+                               otp <= lfsr_digit; 
                            end
                            
             ENTER_OTP: begin
                 total_time <= total_time + 1;
-                if(total_time > (`EXPIRE_TIME*50)) begin
+                if(total_time >= (`EXPIRE_TIME*50)) begin
                     if(hold_time < (`HOLD_TIME*5)) begin 
                         expired   <= 1;
                         hold_time <= hold_time + 1;
@@ -100,8 +100,8 @@ end
     case (current)
         IDLE:        next = GENERATE_OTP;
         GENERATE_OTP: if (lfsr_latch) next = ENTER_OTP;
-        ENTER_OTP:   if (total_time > (`EXPIRE_TIME*50) && hold_time == (`HOLD_TIME*5)) next = IDLE;// 30 secs
-                     else if (total_time > (`EXPIRE_TIME*50)) next = ENTER_OTP;//30 secs
+        ENTER_OTP:   if (total_time >= (`EXPIRE_TIME*50) && hold_time == (`HOLD_TIME*5)) next = IDLE;// 30 secs
+                     else if (total_time >= (`EXPIRE_TIME*50)) next = ENTER_OTP;//30 secs
                      else if (j > 3)    next = UNLOCK;
         UNLOCK:      if (( otp == {{user_otp[0]},{user_otp[1]},{user_otp[2]},{user_otp[3]}} ) && hold_time == (`HOLD_TIME*5)) next = IDLE;//hold_time <250_000_000 5 secs
                      else if ( otp == {{user_otp[0]},{user_otp[1]},{user_otp[2]},{user_otp[3]}}) next = UNLOCK;

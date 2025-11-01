@@ -37,9 +37,9 @@ class otp_scoreboard extends uvm_scoreboard;
     bit [6:0] bcd_attempt;
     bit flag_out = 0;
     bit unlock_flag = 0, lock_flag = 0, expire_flag = 0;
-    int in_c = 0, out_c_lfsr = 0, out_c_status = 0, count_50sec = MASTER_FREQ * 50; //50 sec at 50Mhz
+    int in_c = 0, out_c_lfsr = 0, out_c_status = 0, count_50sec = 2500000000; //50 sec at 50Mhz
     bit status_data = 0; // 0 - data , 1 - status
-    bit otp_compare = 0;
+    bit otp_compare = 0, not_expire_flag = 0;
    
  
     function new(string name="otp_scoreboard", uvm_component parent=null);
@@ -174,15 +174,38 @@ class otp_scoreboard extends uvm_scoreboard;
                 status_data = 0; //means its data
             end
  
+            // forever begin: count_50sec_process
+            //     @(posedge vif.sb_cb);
+            //     if(vif.sb_cb.otp_latch)begin
+            //         `uvm_info(get_type_name(), $sformatf("[%0t] OTP LATCHED, Starting 50 sec count... count_50sec= %0d", $time, count_50sec), UVM_LOW);
+            //         repeat(2500000000)begin
+            //             @(posedge vif.sb_cb);
+            //              `uvm_info(get_type_name(), $sformatf("[%0t] Counting for 50 sec expiry... count= %0d", $time, count_50sec), UVM_LOW);
+            //             if(flag_out) break;
+            //         end
+            //         `uvm_info(get_type_name(), $sformatf("[%0t] 50 sec COUNT COMPLETED count_50sec= %0d", $time, count_50sec), UVM_LOW);
+            //         expire_flag = 1;
+            //         flag_out = 1;
+            //     end
+            // end
             forever begin: count_50sec_process
-                @(posedge vif.sb_cb);
+                @(vif.sb_cb);
                 if(vif.sb_cb.otp_latch)begin
-                    repeat(count_50sec)begin
-                        @(posedge vif.sb_cb);
+                    repeat(50_000_000)begin //50secs
+                        repeat(50)begin
+                        @(vif.sb_cb);//20ns
+                        if(flag_out) begin //lock || unlock
+                           not_expire_flag = 1;
+                            break;
+                        end
+                        end
                         if(flag_out) break;
                     end
-                    expire_flag = 1;
-                    flag_out = 1;
+                    if(!not_expire_flag) begin
+                        $display("[%0t] 50 SEC TIMEOUT EXPIRED,count:%0d", $time,count_50sec);
+                        expire_flag = 1;
+                        flag_out = 1;
+                    end
                 end
             end
  
@@ -305,6 +328,7 @@ class otp_scoreboard extends uvm_scoreboard;
                         lock_flag = 0;
                         expire_flag = 0;
                         first_otp_latch = 1;
+                        not_expire_flag = 0;
  
                         attempt = 1;
                         dut_lfsr_data = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000};
@@ -363,3 +387,4 @@ class otp_scoreboard extends uvm_scoreboard;
         EXPIRY_PASS, EXPIRY_FAIL), UVM_LOW)
     endfunction
 endclass
+ 

@@ -128,6 +128,166 @@ class otp_match_sequence extends uvm_sequence #(otp_seq_item);
   endtask
 endclass
 
+class otp_match_sequence_2 extends uvm_sequence #(otp_seq_item);
+  `uvm_object_utils(otp_match_sequence_2)
+
+  function new(string name="otp_match_sequence_2");
+    super.new(name);
+  endfunction
+  
+  virtual task body();
+    otp_seq_item item;
+  
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 1; 
+      user_in == 3;  
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Match: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 0; 
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Release: user_latch=%0b", $time, item.user_latch), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 1; 
+      user_in ==0 ;  
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Match: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 0; 
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Release: user_latch=%0b", $time, item.user_latch), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 1; 
+      user_in == 2;  
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Match: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 0; 
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Release: user_latch=%0b", $time, item.user_latch), UVM_LOW);
+    finish_item(item);
+  
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 1; 
+      user_in == 7;  
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Match: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 0; 
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Release: user_latch=%0b", $time, item.user_latch), UVM_LOW);
+    finish_item(item);
+  endtask
+endclass
+
+class otp_match_sequence_3 extends uvm_sequence #(otp_seq_item);
+  `uvm_object_utils(otp_match_sequence_3)
+
+  function new(string name="otp_match_sequence_3");
+    super.new(name);
+  endfunction
+  
+  virtual task body();
+    otp_seq_item item;
+  
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 1; 
+      user_in == 5;  
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Match: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 0; 
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Release: user_latch=%0b", $time, item.user_latch), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 1; 
+      user_in == 5;  
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Match: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 0; 
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Release: user_latch=%0b", $time, item.user_latch), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 1; 
+      user_in == 7;  
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Match: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 0; 
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Release: user_latch=%0b", $time, item.user_latch), UVM_LOW);
+    finish_item(item);
+  
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 1; 
+      user_in == 4;  
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Match: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
+    finish_item(item);
+
+    item = otp_seq_item::type_id::create("match_digit");
+    start_item(item);
+    item.randomize() with {
+      user_latch == 0; 
+    };
+    `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input Release: user_latch=%0b", $time, item.user_latch), UVM_LOW);
+    finish_item(item);
+  endtask
+endclass
+
 //4. OTP Out of Range Sequence: Provide 4 out-of-range user inputs with user latch and then release.
 class otp_out_of_range_sequence extends uvm_sequence #(otp_seq_item);
   `uvm_object_utils(otp_out_of_range_sequence)

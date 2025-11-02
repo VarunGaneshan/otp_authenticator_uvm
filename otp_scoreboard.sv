@@ -42,7 +42,7 @@ class otp_scoreboard extends uvm_scoreboard;
     bit status_data = 0; // 0 - data , 1 - status
     bit otp_compare = 0, not_expire_flag = 0;
     bit idle  = 1;
-   
+    bit low_user_latch = 1;
  
     function new(string name="otp_scoreboard", uvm_component parent=null);
             super.new(name, parent);  
@@ -73,7 +73,6 @@ class otp_scoreboard extends uvm_scoreboard;
  
             count_2k++;
             count_0_5++;
- 
  
             if (count_0_5 >= CLK_0_5HZ_DIV) begin
                 clk_0_5hz = ~clk_0_5hz;
@@ -137,10 +136,12 @@ class otp_scoreboard extends uvm_scoreboard;
                 ip_fifo.get(ip_trans); //otp_latch,user_in,user_latch
                 `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b user_in=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch,ip_trans.user_in), UVM_LOW);
                 
-                //include posedge detector logic here 
-                if(ip_trans.user_latch && attempt < 4 && in_c <= 3)begin
+                //posedge detector for user latch
+                if(!ip_trans.user_latch) low_user_latch = 1;
+                if(ip_trans.user_latch && attempt < 4 && in_c <= 3 && low_user_latch)begin
                     convert_to_bcd(ip_trans.user_in,bcd_user_in);
                     dut_ip_otp[in_c] = bcd_user_in;
+                    low_user_latch = 0;
                     in_c++;
                 end
             end
@@ -180,6 +181,23 @@ class otp_scoreboard extends uvm_scoreboard;
                 dut_lfsr_data = {7'b1000000,7'b1000000,7'b1000000,7'b1000000};
 
                 if(vif.sb_cb.otp_latch) idle  = 0;
+            end
+            else if (vif.sb_cb.reset_n == 0) begin
+                lfsr_exp = {7'b1111111,7'b1111111,7'b1111111,7'b1111111};
+                dut_user_out = {7'b1111111,7'b1111111,7'b1111111,7'b1111111};
+                dut_lfsr_data = {7'b1111111,7'b1111111,7'b1111111,7'b1111111};
+                attempt = 1;
+                in_c = 0;
+                out_c_lfsr = 0;
+                out_c_status = 0;
+                flag_out = 0;
+                unlock_flag = 0;
+                lock_flag = 0;
+                expire_flag = 0;
+                first_otp_latch = 1;
+                not_expire_flag = 0;
+                low_user_latch = 1;
+                idle  = 1;
             end
            end
  
@@ -350,7 +368,7 @@ class otp_scoreboard extends uvm_scoreboard;
                         expire_flag = 0;
                         first_otp_latch = 1;
                         not_expire_flag = 0;
- 
+                        low_user_latch = 1;
                         attempt = 1;
                         idle  = 1;
                         dut_lfsr_data = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000};

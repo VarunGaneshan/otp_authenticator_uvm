@@ -34,12 +34,14 @@ class otp_scoreboard extends uvm_scoreboard;
     bit [6:0] dut_lfsr_data [4];
     bit [6:0] dut_lfsr_status [4];
     bit [6:0] dut_user_out [4];
+    bit [6:0] user_out_exp [4] = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000}; //expected user out all 0s
     bit [6:0] bcd_attempt;
     bit flag_out = 0;
     bit unlock_flag = 0, lock_flag = 0, expire_flag = 0;
-    int in_c = 0, out_c_lfsr = 0, out_c_status = 0, count_50sec = 2500000000; //50 sec at 50Mhz
+    int in_c = 0, out_c_lfsr = 0, out_c_status = 0; //count_50sec = 2500000000; //50 sec at 50Mhz
     bit status_data = 0; // 0 - data , 1 - status
     bit otp_compare = 0, not_expire_flag = 0;
+    bit idle  = 1;
    
  
     function new(string name="otp_scoreboard", uvm_component parent=null);
@@ -125,7 +127,6 @@ class otp_scoreboard extends uvm_scoreboard;
     endtask
  
  
- 
     task run_phase(uvm_phase phase);
         super.run_phase(phase);
  
@@ -135,7 +136,8 @@ class otp_scoreboard extends uvm_scoreboard;
             forever begin: input_process
                 ip_fifo.get(ip_trans); //otp_latch,user_in,user_latch
                 `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b user_in=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch,ip_trans.user_in), UVM_LOW);
-               
+                
+                //include posedge detector logic here 
                 if(ip_trans.user_latch && attempt < 4 && in_c <= 3)begin
                     convert_to_bcd(ip_trans.user_in,bcd_user_in);
                     dut_ip_otp[in_c] = bcd_user_in;
@@ -144,11 +146,14 @@ class otp_scoreboard extends uvm_scoreboard;
             end
  
             forever begin: output_process
+                
                 op_fifo.get(op_trans);
- 
+
                  if(out_c_lfsr <= 4 && attempt < 4 && !status_data)begin
                     dut_lfsr_data[op_trans.an] = op_trans.lfsr_out;
                     out_c_lfsr++;
+                    if(idle)
+                    dut_user_out[op_trans.an] = op_trans.user_out;
                  end
                  else if (out_c_status <= 4 && attempt < 4 && status_data) begin
                     dut_lfsr_status[op_trans.an] = op_trans.lfsr_out;
@@ -157,14 +162,26 @@ class otp_scoreboard extends uvm_scoreboard;
             end
  
             forever begin
-                wait(in_c==4);
-                    repeat(4)@(posedge clk_2khz)begin
-                        dut_user_out[vif.sb_cb.an] = vif.sb_cb.user_out;
-                    end
-                    otp_compare = 1;
-                    in_c = 0;
+                if(vif.sb_cb.otp_latch)begin
+                    wait(in_c==4);
+                        repeat(4)@(posedge clk_2khz)begin
+                            dut_user_out[vif.sb_cb.an] = vif.sb_cb.user_out;
+                        end
+                        otp_compare = 1;
+                        in_c = 0;
+                end
             end
            
+           forever begin: reset_reg
+           @(posedge vif.sb_cb);
+            if (idle)begin
+                lfsr_exp = {7'b1000000,7'b1000000,7'b1000000,7'b1000000};
+                dut_user_out = {7'b1000000,7'b1000000,7'b1000000,7'b1000000};
+                dut_lfsr_data = {7'b1000000,7'b1000000,7'b1000000,7'b1000000};
+
+                if(vif.sb_cb.otp_latch) idle  = 0;
+            end
+           end
  
             forever begin: toggle_lfsr_status
                 status_data = 0; //means its data
@@ -174,20 +191,6 @@ class otp_scoreboard extends uvm_scoreboard;
                 status_data = 0; //means its data
             end
  
-            // forever begin: count_50sec_process
-            //     @(posedge vif.sb_cb);
-            //     if(vif.sb_cb.otp_latch)begin
-            //         `uvm_info(get_type_name(), $sformatf("[%0t] OTP LATCHED, Starting 50 sec count... count_50sec= %0d", $time, count_50sec), UVM_LOW);
-            //         repeat(2500000000)begin
-            //             @(posedge vif.sb_cb);
-            //              `uvm_info(get_type_name(), $sformatf("[%0t] Counting for 50 sec expiry... count= %0d", $time, count_50sec), UVM_LOW);
-            //             if(flag_out) break;
-            //         end
-            //         `uvm_info(get_type_name(), $sformatf("[%0t] 50 sec COUNT COMPLETED count_50sec= %0d", $time, count_50sec), UVM_LOW);
-            //         expire_flag = 1;
-            //         flag_out = 1;
-            //     end
-            // end
             forever begin: count_50sec_process
                 @(vif.sb_cb);
                 if(vif.sb_cb.otp_latch)begin
@@ -202,7 +205,7 @@ class otp_scoreboard extends uvm_scoreboard;
                         if(flag_out) break;
                     end
                     if(!not_expire_flag) begin
-                        $display("[%0t] 50 SEC TIMEOUT EXPIRED,count:%0d", $time,count_50sec);
+                        //$display("[%0t] 50 SEC TIMEOUT EXPIRED,count:%0d", $time,count_50sec);
                         expire_flag = 1;
                         flag_out = 1;
                     end
@@ -212,8 +215,18 @@ class otp_scoreboard extends uvm_scoreboard;
             forever begin: compare_logic
                 @(posedge clk_2khz); //compare at 2khz clock
                  //compare logic after 4 outputs captured
+
                  if(out_c_lfsr > 3 && !status_data)begin
                      out_c_lfsr = 0;
+
+                    if(idle)begin
+                        if(user_out_exp == dut_user_out) begin //0000 == 0000
+                            `uvm_info(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp), UVM_LOW);
+                        end
+                        else begin
+                            `uvm_error(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MISMATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp))
+                        end
+                    end
                     //LFSR compare
                     if(lfsr_exp == dut_lfsr_data) begin
                         LFSR_PASS++;
@@ -252,7 +265,15 @@ class otp_scoreboard extends uvm_scoreboard;
                     convert_to_bcd(attempt,bcd_attempt);
                     out_c_status = 0;
                    
- 
+                    if(idle)begin
+                        if(user_out_exp == dut_user_out) begin //0000 == 0000
+                            `uvm_info(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp), UVM_LOW);
+                        end
+                        else begin
+                            `uvm_error(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MISMATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp))
+                        end
+                    end
+
                     if (flag_out)begin
                         if(unlock_flag)begin //A-1/2/3 U
                             if(dut_lfsr_status[0] ==  7'b1000001 &&
@@ -331,6 +352,7 @@ class otp_scoreboard extends uvm_scoreboard;
                         not_expire_flag = 0;
  
                         attempt = 1;
+                        idle  = 1;
                         dut_lfsr_data = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000};
                         lfsr_exp = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000};
                         dut_user_out = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000};
@@ -340,7 +362,6 @@ class otp_scoreboard extends uvm_scoreboard;
             end
  
            
- 
             forever begin: lfsr_gen_process
                 @(posedge vif.sb_cb or negedge vif.sb_cb.reset_n);
                

@@ -22,6 +22,7 @@ class otp_scoreboard extends uvm_scoreboard;
     bit [15:0] lfsr_reg;
     bit [15:0] lfsr_temp;
     bit [6:0] lfsr_exp [4];
+    bit [6:0] user_out_exp [4] = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000}; //0000 in bcd [for idle condition after 1 session]
     int attempt = 1;
     bit first_otp_latch = 1;
  
@@ -39,7 +40,7 @@ class otp_scoreboard extends uvm_scoreboard;
     bit unlock_flag = 0, lock_flag = 0, expire_flag = 0;
     int in_c = 0, out_c_lfsr = 0, out_c_status = 0, count_50sec = 2500000000; //50 sec at 50Mhz
     bit status_data = 0; // 0 - data , 1 - status
-    bit otp_compare = 0, not_expire_flag = 0;
+    bit otp_compare = 0, not_expire_flag = 0, idle=1;
     bit low_user_latch = 1;
     function new(string name="otp_scoreboard", uvm_component parent=null);
             super.new(name, parent);  
@@ -135,14 +136,17 @@ class otp_scoreboard extends uvm_scoreboard;
                 ip_fifo.get(ip_trans); //otp_latch,user_in,user_latch
                 `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b user_in=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch,ip_trans.user_in), UVM_LOW);
                 if(!first_otp_latch) begin
+                    idle = 0;
+
                     //posedge detector for user latch
+
                     if(!ip_trans.user_latch) low_user_latch = 1;
                     if(ip_trans.user_latch && attempt < 4 && in_c <= 3 && low_user_latch)begin
                         convert_to_bcd(ip_trans.user_in,bcd_user_in);
                         dut_ip_otp[in_c] = bcd_user_in;
                         low_user_latch = 0;
                         in_c++;
-                    end 
+                    end
                 end
             end
  
@@ -152,10 +156,14 @@ class otp_scoreboard extends uvm_scoreboard;
                  if(out_c_lfsr <= 4 && attempt < 4 && !status_data)begin
                     dut_lfsr_data[op_trans.an] = op_trans.lfsr_out;
                     out_c_lfsr++;
+                    if(idle)
+                    dut_user_out[op_trans.an] = op_trans.user_out;
                  end
                  else if (out_c_status <= 4 && attempt < 4 && status_data) begin
                     dut_lfsr_status[op_trans.an] = op_trans.lfsr_out;
                     out_c_status++;
+                    if(idle)
+                    dut_user_out[op_trans.an] = op_trans.user_out;
                  end
             end
  
@@ -203,6 +211,17 @@ class otp_scoreboard extends uvm_scoreboard;
                  //compare logic after 4 outputs captured
                  if(out_c_lfsr > 3 && !status_data)begin
                      out_c_lfsr = 0;
+
+                    //User OUT compare IDLE condition during data 
+                    if(idle)begin
+                        if(user_out_exp == dut_user_out) begin //0000 == 0000
+                            `uvm_info(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp), UVM_LOW);
+                        end
+                        else begin
+                            `uvm_error(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MISMATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp))
+                        end
+                    end
+
                     //LFSR compare
                     if(lfsr_exp == dut_lfsr_data) begin
                         LFSR_PASS++;
@@ -240,6 +259,16 @@ class otp_scoreboard extends uvm_scoreboard;
                  
                     convert_to_bcd(attempt,bcd_attempt);
                     out_c_status = 0;
+
+                    //User OUT compare IDLE condition during status
+                    if(idle)begin
+                        if(user_out_exp == dut_user_out) begin //0000 == 0000
+                            `uvm_info(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp), UVM_LOW);
+                        end
+                        else begin
+                            `uvm_error(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MISMATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp))
+                        end
+                    end
                    
  
                     if (flag_out)begin
@@ -318,6 +347,7 @@ class otp_scoreboard extends uvm_scoreboard;
                         expire_flag = 0;
                         first_otp_latch = 1;
                         not_expire_flag = 0;
+                        idle=1;
  
                         attempt = 1;
                         dut_lfsr_data = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000};
@@ -376,4 +406,3 @@ class otp_scoreboard extends uvm_scoreboard;
         EXPIRY_PASS, EXPIRY_FAIL), UVM_LOW)
     endfunction
 endclass
- 

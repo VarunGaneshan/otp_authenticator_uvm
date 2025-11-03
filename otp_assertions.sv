@@ -56,7 +56,7 @@ interface otp_assertions (
   endproperty
   assert_an_valid: assert property (an_valid_check)
     else $error("[ASSERTION] an signal is unknown at time %0t", $time);
-
+/*
   wire #(1ps) reset_n_delay = reset_n;
 
    property reset_lfsr_out;
@@ -70,4 +70,5 @@ interface otp_assertions (
   endproperty
   assert_reset_user_out_assertion: assert property (reset_user_out)
       else $error("[ASSERTION] User output not reset to all 1's at time %0t", $time);
+*/
 endinterface

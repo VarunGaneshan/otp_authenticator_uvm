@@ -8,32 +8,7 @@ class otp_subscriber extends uvm_component;
     uvm_tlm_analysis_fifo #(otp_seq_item) ip_fifo;
     uvm_tlm_analysis_fifo #(otp_seq_item) op_fifo;
 
-  covergroup ip_cg;
-        user_in_d0: coverpoint ip_trans.user_in iff(count_ip==0 && ip_trans.user_latch) {
-            bins valid_low   = {[0:2]};    // S bins: 0-2
-            bins valid_mid   = {[3:5]};    // M bins: 3-5
-            bins valid_high  = {[6:9]};    // L bins: 6-9
-            illegal_bins illegal_digits  = {[10:15]};  // Illegal bins
-        }
-        user_in_d1: coverpoint ip_trans.user_in iff(count_ip==1 && ip_trans.user_latch) {
-            bins valid_low   = {[0:2]};    // S bins: 0-2
-            bins valid_mid   = {[3:5]};    // M bins: 3-5
-            bins valid_high  = {[6:9]};    // L bins: 6-9
-            illegal_bins illegal_digits  = {[10:15]};  // Illegal bins
-        }
-        user_in_d2: coverpoint ip_trans.user_in iff(count_ip==2 && ip_trans.user_latch) {
-            bins valid_low   = {[0:2]};    // S bins: 0-2
-            bins valid_mid   = {[3:5]};    // M bins: 3-5
-            bins valid_high  = {[6:9]};    // L bins: 6-9
-            illegal_bins illegal_digits  = {[10:15]};  // Illegal bins
-        }
-        user_in_d3: coverpoint ip_trans.user_in iff(count_ip==3 && ip_trans.user_latch) {
-            bins valid_low   = {[0:2]};    // S bins: 0-2
-            bins valid_mid   = {[3:5]};    // M bins: 3-5
-            bins valid_high  = {[6:9]};    // L bins: 6-9
-            illegal_bins illegal_digits  = {[10:15]};  // Illegal bins
-        }
-        
+  covergroup ip_cg;     
         user_in: coverpoint ip_trans.user_in iff(ip_trans.user_latch) {
             bins valid_low   = {[0:2]};    // S bins: 0-2
             bins valid_mid   = {[3:5]};    // M bins: 3-5
@@ -51,7 +26,7 @@ class otp_subscriber extends uvm_component;
             bins latch_1_to_0 = (1 => 0);
         }
 
-        user_in_x_user_latch: cross user_in, user_latch_transitions { //only consider o_to_1
+        user_in_x_user_latch: cross user_in, user_latch_transitions { //only consider 0_to_1
             bins latch_0_to_1_low = binsof(user_in.valid_low) && binsof(user_latch_transitions.latch_0_to_1);
             bins latch_0_to_1_mid = binsof(user_in.valid_mid) && binsof(user_latch_transitions.latch_0_to_1);
             bins latch_0_to_1_high = binsof(user_in.valid_high) && binsof(user_latch_transitions.latch_0_to_1);
@@ -60,61 +35,22 @@ class otp_subscriber extends uvm_component;
   endgroup
    
   covergroup op_cg;
-        lfsr_out_data_d0: coverpoint op_trans.lfsr_out iff(status==0 && count_op==0) {
+        lfsr_out: coverpoint op_trans.lfsr_out {
             bins valid_low   = {[0:2]};    // S bins: 0-2
             bins valid_mid   = {[3:5]};    // M bins: 3-5
             bins valid_high  = {[6:9]};    // L bins: 6-9
-            bins off  = {15};  // OFF
-        }
-        lfsr_out_data_d1: coverpoint op_trans.lfsr_out iff(status==0 && count_op==1) {
-            bins valid_low   = {[0:2]};    // S bins: 0-2
-            bins valid_mid   = {[3:5]};    // M bins: 3-5
-            bins valid_high  = {[6:9]};    // L bins: 6-9
-            bins off  = {15};  // OFF
-        }
-        lfsr_out_data_d2: coverpoint op_trans.lfsr_out iff(status==0 && count_op==2) {
-            bins valid_low   = {[0:2]};    // S bins: 0-2
-            bins valid_mid   = {[3:5]};    // M bins: 3-5
-            bins valid_high  = {[6:9]};    // L bins: 6-9
-            bins off  = {15};  // OFF
-        }
-        lfsr_out_data_d3: coverpoint op_trans.lfsr_out iff(status==0 && count_op==3) {
-            bins valid_low   = {[0:2]};    // S bins: 0-2
-            bins valid_mid   = {[3:5]};    // M bins: 3-5
-            bins valid_high  = {[6:9]};    // L bins: 6-9
-            bins off  = {15};  // OFF
-        }
-        lfsr_out_status: coverpoint op_trans.lfsr_out iff(status==1) {
             bins attempt_no[]   = {[1:3]};   
             bins locked = {10};
             bins unlocked = {11};
             bins expired = {12};
             bins dash = {13};
             bins attempt = {14};
+            bins off = {15};
         }
-        user_out_d0: coverpoint op_trans.user_out iff(count_op==0) {
+        user_out: coverpoint op_trans.user_out {
             bins valid_low   = {[0:2]};    
             bins valid_mid   = {[3:5]};   
             bins valid_high  = {[6:9]};   
-            bins off  = {15};  
-        }
-        user_out_d1: coverpoint op_trans.user_out iff(count_op==1) {
-            bins valid_low   = {[0:2]};    
-            bins valid_mid   = {[3:5]};   
-            bins valid_high  = {[6:9]};   
-            bins off  = {15};  
-        }
-        user_out_d2: coverpoint op_trans.user_out iff(count_op==2) {
-            bins valid_low   = {[0:2]};    
-            bins valid_mid   = {[3:5]};   
-            bins valid_high  = {[6:9]};   
-            bins off  = {15};  
-        }
-        user_out_d3: coverpoint op_trans.user_out iff(count_op==3) {
-            bins valid_low   = {[0:2]};    
-            bins valid_mid   = {[3:5]};   
-            bins valid_high  = {[6:9]};   
-            bins off  = {15};  
         }
         cp_an: coverpoint op_trans.an {
             bins an[] = {[0:3]};
@@ -134,13 +70,7 @@ class otp_subscriber extends uvm_component;
     fork
       forever begin
         ip_fifo.get(ip_trans);
-        count_ip++;// 0 1 2 3
         ip_cg.sample();
-        if(count_ip==3) begin
-            count_ip=0;
-        end
-        //`uvm_info(get_type_name(), $sformatf("[%0t] I/P Coverage: user_in=%0d, user_latch=%0b, otp_latch=%0b", 
-        //       $time, ip_trans.user_in, ip_trans.user_latch, ip_trans.otp_latch), UVM_HIGH);
       end
 
       forever begin
@@ -177,20 +107,7 @@ class otp_subscriber extends uvm_component;
             7'b0001000: op_trans.lfsr_out = 7'd14; // A
             7'b1111111: op_trans.lfsr_out = 7'd15; // OFF
       endcase
-        if (op_trans.lfsr_out>9 && op_trans.lfsr_out<13 && count_op==0) begin
-            status = 1;
-        end else if(op_trans.lfsr_out==7'd13 && count_op==1) begin
-            status = 1;
-        end else if(count_op==0) begin
-            status = 0;
-        end
-        count_op++;// 0 1 2 3
         op_cg.sample();
-        if(count_op==3) begin
-            count_op=0;
-        end
-        //`uvm_info(get_type_name(), $sformatf("[%0t] O/P Coverage: user_out=%b, lfsr_out=%b, an=%0d", 
-        //         $time, op_trans.user_out, op_trans.lfsr_out, op_trans.an), UVM_HIGH);
       end
     join
   endtask

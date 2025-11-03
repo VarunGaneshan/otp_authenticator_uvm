@@ -21,7 +21,7 @@ class otp_scoreboard extends uvm_scoreboard;
     bit clk_2khz, clk_0_5hz;
     bit [15:0] lfsr_reg;
     bit [15:0] lfsr_temp;
-    bit [6:0] lfsr_exp [4];
+    bit [6:0] lfsr_exp [4] = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000};
     bit [6:0] user_out_exp [4] = '{7'b1000000,7'b1000000,7'b1000000,7'b1000000}; //0000 in bcd [for idle condition after 1 session]
     int attempt = 1;
     bit first_otp_latch = 1;

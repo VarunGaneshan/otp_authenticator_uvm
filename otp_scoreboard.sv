@@ -38,7 +38,7 @@ class otp_scoreboard extends uvm_scoreboard;
     bit [6:0] bcd_attempt;
     bit flag_out = 0;
     bit unlock_flag = 0, lock_flag = 0, expire_flag = 0;
-    int in_c = 0, out_c_lfsr = 0, out_c_status = 0, count_50sec = 2500000000; //50 sec at 50Mhz
+    int in_c = 0, out_c_lfsr = 0, out_c_status = 0;
     bit status_data = 0; // 0 - data , 1 - status
     bit otp_compare = 0, not_expire_flag = 0, idle=1;
     bit low_user_latch = 1;
@@ -134,7 +134,7 @@ class otp_scoreboard extends uvm_scoreboard;
  
             forever begin: input_process
                 ip_fifo.get(ip_trans); //otp_latch,user_in,user_latch
-                `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b user_in=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch,ip_trans.user_in), UVM_LOW);
+                //`uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b user_in=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch,ip_trans.user_in), UVM_LOW);
                 if(!first_otp_latch) begin
                     idle = 0;
 
@@ -199,7 +199,7 @@ class otp_scoreboard extends uvm_scoreboard;
                         if(flag_out) break;
                     end
                     if(!not_expire_flag) begin
-                        $display("[%0t] 50 SEC TIMEOUT EXPIRED,count:%0d", $time,count_50sec);
+                        $display("[%0t] 50 SEC TIMEOUT EXPIRED,count", $time);
                         expire_flag = 1;
                         flag_out = 1;
                     end

@@ -49,7 +49,7 @@ module tb_top;
     uvm_config_db#(virtual otp_if)::set(null,"uvm_test_top.env.active_agent.driver","vif",intf);
     uvm_config_db#(virtual otp_if)::set(null,"uvm_test_top.env.passive_agent.monitor","vif",intf);
     uvm_config_db#(virtual otp_if)::set(null,"uvm_test_top.env.scoreboard","vif",intf);
-    run_test("otp_third_attempt_match_test");
+    run_test("regression_two_test");
    #100;
     $display("Simulation Finished");
     $finish;

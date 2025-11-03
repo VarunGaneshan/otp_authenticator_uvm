@@ -489,6 +489,7 @@ class regression_two_test extends uvm_test;
 
 
 //1
+    //first attempt match part
     otp_latch_seq.start(env.active_agent.sequencer); //0-1
     match_seq.start(env.active_agent.sequencer); //2-9
     #4s;//10-13

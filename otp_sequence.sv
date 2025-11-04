@@ -34,7 +34,7 @@ class otp_input_sequence extends uvm_sequence #(otp_seq_item);
    repeat (4) begin
       item = otp_seq_item::type_id::create("digit");
       start_item(item);
-      item.randomize() with {user_latch == 1; user_in inside {[0:9]};};
+      item.randomize() with {user_latch == 1; otp_latch == 0; user_in inside {[0:9]};};
       `uvm_info(get_type_name(), $sformatf("[%0t] Driving User Input: user_latch=%0b, user_in=%0d", $time, item.user_latch, item.user_in), UVM_LOW);
       finish_item(item);
     

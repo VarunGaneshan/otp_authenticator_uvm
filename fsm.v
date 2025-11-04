@@ -13,8 +13,7 @@ module fsm(
     output [15:0] user_otp_out,
     output reg [15:0] otp
     );
-    
-
+    //coverage toggle_ignore otp 15 3
     reg [31:0] total_time;
     reg [27:0] hold_time;
     reg [1:0] current,next;

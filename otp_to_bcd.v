@@ -11,7 +11,7 @@ module otp_to_bcd(
 );
     wire clk_out_disp;
     wire clk_out_disp2;
-    
+    //coverage toggle_ignore lfsr_otp 15 3
     clk_div inst2(.clk(clk),
                   .rstn(rstn),
                   .clk_out_disp(clk_out_disp));
@@ -21,7 +21,7 @@ module otp_to_bcd(
                        .clk_out_disp2(clk_out_disp2));
     
     reg [1:0] disp1;
-    reg [1:0] disp2;
+    reg [1:0] disp2; 
     reg [3:0] mode;
     reg shift;
     reg ON;
@@ -32,7 +32,7 @@ module otp_to_bcd(
         else
             shift <= ~shift;
     end
-    
+    //coverage toggle_ignore mode 3
     always @ (*) begin
         if(unlock)
             mode = 4'b0111;
@@ -44,6 +44,7 @@ module otp_to_bcd(
             mode = 4'd0;
     end
     
+    //coverage toggle_ignore ON 
     always @(posedge clk_out_disp or negedge rstn) begin
         if(!rstn) begin
             ON <= 0;

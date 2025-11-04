@@ -34,7 +34,7 @@ class otp_active_monitor extends uvm_monitor;
     mon_trans.user_in = vif.act_mon_cb.user_in;
     mon_trans.otp_latch = vif.act_mon_cb.otp_latch;
     mon_trans.user_latch = vif.act_mon_cb.user_latch;
-    `uvm_info(get_type_name(), $sformatf("[%0t] Captured inputs: user_in=%0d, otp_latch=%0b, user_latch=%0b", $time, mon_trans.user_in, mon_trans.otp_latch, mon_trans.user_latch), UVM_LOW);
+    //`uvm_info(get_type_name(), $sformatf("[%0t] Captured inputs: user_in=%0d, otp_latch=%0b, user_latch=%0b", $time, mon_trans.user_in, mon_trans.otp_latch, mon_trans.user_latch), UVM_LOW);
   endtask
  
 endclass

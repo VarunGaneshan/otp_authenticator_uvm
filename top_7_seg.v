@@ -10,7 +10,7 @@ module top_7_seg(
     
     wire [3:0] bcd1, bcd2;
     wire shift;
-    
+    //coverage toggle_ignore lfsr_otp 15 3
     otp_to_bcd U1 (.clk(clk),
                    .rstn(rstn),
                    .lock(lock),

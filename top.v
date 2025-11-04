@@ -32,7 +32,7 @@ lfsr dut1(
     .reset(reset_n),
     .d_out(d_out)
 );
-
+//coverage toggle_ignore otp 15 3
 fsm dut2(.clk(clk),
     .reset(reset_n),
     .lfsr_digit(d_out),

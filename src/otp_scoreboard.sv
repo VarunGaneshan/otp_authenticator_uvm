@@ -134,7 +134,7 @@ class otp_scoreboard extends uvm_scoreboard;
  
             forever begin: input_process
                 ip_fifo.get(ip_trans); //otp_latch,user_in,user_latch
-                //`uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b user_in=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch,ip_trans.user_in), UVM_LOW);
+                `uvm_info(get_type_name(), $sformatf("[%0t] IP_TRANS: otp_latch=%0b user_latch=%0b user_in=%0d", $time, ip_trans.otp_latch, ip_trans.user_latch,ip_trans.user_in), UVM_LOW);
                 if(!first_otp_latch) begin
                     idle = 0;
 
@@ -199,7 +199,7 @@ class otp_scoreboard extends uvm_scoreboard;
                         if(flag_out) break;
                     end
                     if(!not_expire_flag) begin
-                        //$display("[%0t] 50 SEC TIMEOUT EXPIRED,count", $time);
+                        $display("[%0t] 50 SEC TIMEOUT EXPIRED,count", $time);
                         expire_flag = 1;
                         flag_out = 1;
                     end
@@ -215,21 +215,21 @@ class otp_scoreboard extends uvm_scoreboard;
                     //User OUT compare IDLE condition during data 
                     if(idle)begin
                         if(user_out_exp == dut_user_out) begin //0000 == 0000
-                            //`uvm_info(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp), UVM_LOW);
+                            `uvm_info(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp), UVM_LOW);
                         end
                         else begin
-                           // `uvm_error(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MISMATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp))
+                           `uvm_error(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MISMATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp))
                         end
                     end
 
                     //LFSR compare
                     if(lfsr_exp == dut_lfsr_data) begin
                         LFSR_PASS++;
-                         //`uvm_info(get_type_name(), $sformatf("[%0t] LFSR [DATA] MATCH : DUT LFSR=%p, Expected LFSR=%p", $time, dut_lfsr_data, lfsr_exp), UVM_LOW);
+                         `uvm_info(get_type_name(), $sformatf("[%0t] LFSR [DATA] MATCH : DUT LFSR=%p, Expected LFSR=%p", $time, dut_lfsr_data, lfsr_exp), UVM_LOW);
                     end
                     else begin
                         LFSR_FAIL++;
-                         //`uvm_error(get_type_name(), $sformatf("[%0t] LFSR [DATA] MISMATCH : DUT LFSR=%p, Expected LFSR=%p", $time, dut_lfsr_data, lfsr_exp))
+                         `uvm_error(get_type_name(), $sformatf("[%0t] LFSR [DATA] MISMATCH : DUT LFSR=%p, Expected LFSR=%p", $time, dut_lfsr_data, lfsr_exp))
                     end
                  end
  
@@ -237,7 +237,7 @@ class otp_scoreboard extends uvm_scoreboard;
                  if(otp_compare)begin
                         if( dut_lfsr_data == dut_user_out)begin
                             OTP_PASS++;
-                            //`uvm_info(get_type_name(), $sformatf("[%0t] |||| OTP MATCH at ATTEMPT %0d ||||: DUT GEN OTP=%p, Input USER OTP=%p", $time, attempt,  dut_lfsr_data, dut_user_out), UVM_LOW);
+                            `uvm_info(get_type_name(), $sformatf("[%0t] |||| OTP MATCH at ATTEMPT %0d ||||: DUT GEN OTP=%p, Input USER OTP=%p", $time, attempt,  dut_lfsr_data, dut_user_out), UVM_LOW);
                             unlock_flag = 1;
                             flag_out = 1;
                            
@@ -248,7 +248,7 @@ class otp_scoreboard extends uvm_scoreboard;
                                 lock_flag = 1;
                                 flag_out = 1;
                             end
-                            //`uvm_error(get_type_name(), $sformatf("[%0t] |||| OTP MISMATCH at ATTEMPT %0d ||||: DUT GEN OTP=%p, Input USER OTP=%p", $time,attempt, dut_lfsr_data, dut_user_out));
+                            `uvm_error(get_type_name(), $sformatf("[%0t] |||| OTP MISMATCH at ATTEMPT %0d ||||: DUT GEN OTP=%p, Input USER OTP=%p", $time,attempt, dut_lfsr_data, dut_user_out));
                             if(attempt<3)
                                 attempt++;
                         end
@@ -263,10 +263,10 @@ class otp_scoreboard extends uvm_scoreboard;
                     //User OUT compare IDLE condition during status
                     if(idle)begin
                         if(user_out_exp == dut_user_out) begin //0000 == 0000
-                            //`uvm_info(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp), UVM_LOW);
+                            `uvm_info(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp), UVM_LOW);
                         end
                         else begin
-                            //`uvm_error(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MISMATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp))
+                            `uvm_error(get_type_name(), $sformatf("[%0t] USER OUT [IDLE] MISMATCH : DUT USER OUT=%p, Expected USER OUT=%p", $time, dut_user_out, user_out_exp))
                         end
                     end
                    
@@ -278,12 +278,12 @@ class otp_scoreboard extends uvm_scoreboard;
                             dut_lfsr_status[2] ==  bcd_attempt &&
                             dut_lfsr_status[3] ==  7'b0001000)begin
                                 UNLOCK_PASS++;
-                                //`uvm_info(get_type_name(), $sformatf("[%0t] //// DEVICE UNLOCKED at ATTEMPT %0d ////", $time, attempt), UVM_LOW);
-                            //     `uvm_info(get_type_name(), $sformatf("[%0t] LFSR [STATUS] MATCH : DUT LFSR=%p, bcd=%p", $time, dut_lfsr_status, bcd_attempt), UVM_LOW);
+                                `uvm_info(get_type_name(), $sformatf("[%0t] //// DEVICE UNLOCKED at ATTEMPT %0d ////", $time, attempt), UVM_LOW);
+                            `uvm_info(get_type_name(), $sformatf("[%0t] LFSR [STATUS] MATCH : DUT LFSR=%p, bcd=%p", $time, dut_lfsr_status, bcd_attempt), UVM_LOW);
                              end
                             else begin
                                 UNLOCK_FAIL++;
-                                //`uvm_error(get_type_name(), $sformatf("[%0t] //// DEVICE UNLOCK STATUS MISMATCH at ATTEMPT %0d ////", $time, attempt));//attempt will be incremented already
+                                `uvm_error(get_type_name(), $sformatf("[%0t] //// DEVICE UNLOCK STATUS MISMATCH at ATTEMPT %0d ////", $time, attempt));//attempt will be incremented already
                             end
                         end
                        
@@ -294,11 +294,11 @@ class otp_scoreboard extends uvm_scoreboard;
                             dut_lfsr_status[2] ==  bcd_attempt &&
                             dut_lfsr_status[3] ==  7'b0001000)begin
                                 LOCK_PASS++;
-                                //`uvm_info(get_type_name(), $sformatf("[%0t] //// DEVICE LOCKED after 3 UNSUCCESSFUL attempts ////", $time), UVM_LOW);
+                                `uvm_info(get_type_name(), $sformatf("[%0t] //// DEVICE LOCKED after 3 UNSUCCESSFUL attempts ////", $time), UVM_LOW);
                             end
                             else begin
                                 LOCK_FAIL++;
-                                //`uvm_error(get_type_name(), $sformatf("[%0t] //// DEVICE LOCK STATUS MISMATCH after 3 UNSUCCESSFUL attempts ////", $time));
+                                `uvm_error(get_type_name(), $sformatf("[%0t] //// DEVICE LOCK STATUS MISMATCH after 3 UNSUCCESSFUL attempts ////", $time));
                             end
                         end
                         else if (expire_flag) begin // A - 1/2/3 E (expiry flag set after 50 sec)
@@ -307,11 +307,11 @@ class otp_scoreboard extends uvm_scoreboard;
                             dut_lfsr_status[2] ==  bcd_attempt &&
                             dut_lfsr_status[3] ==  7'b0001000)begin
                                 EXPIRY_PASS++;
-                                //`uvm_info(get_type_name(), $sformatf("[%0t] //// DEVICE EXPIRED [50SEC] ////", $time), UVM_LOW);
+                                `uvm_info(get_type_name(), $sformatf("[%0t] //// DEVICE EXPIRED [50SEC] ////", $time), UVM_LOW);
                             end
                             else begin
                                 EXPIRY_FAIL++;
-                                //`uvm_error(get_type_name(), $sformatf("[%0t] //// DEVICE EXPIRY STATUS MISMATCH ////", $time));
+                                `uvm_error(get_type_name(), $sformatf("[%0t] //// DEVICE EXPIRY STATUS MISMATCH ////", $time));
                             end
                         end
                     end
@@ -323,13 +323,13 @@ class otp_scoreboard extends uvm_scoreboard;
                             dut_lfsr_status[3] ==  7'b0001000)
                             begin
                                 ATTEMPT_PASS++;
-                                //`uvm_info(get_type_name(), $sformatf("[%0t] ---- ATTEMPT %0d STATUS MATCH ----", $time, attempt), UVM_LOW);
-                                // `uvm_info(get_type_name(), $sformatf("[%0t] LFSR status Match with SCB generated: DUT LFSR=%p, bcd=%p", $time, dut_lfsr_status, bcd_attempt), UVM_LOW);
+                                `uvm_info(get_type_name(), $sformatf("[%0t] ---- ATTEMPT %0d STATUS MATCH ----", $time, attempt), UVM_LOW);
+                                 `uvm_info(get_type_name(), $sformatf("[%0t] LFSR status Match with SCB generated: DUT LFSR=%p, bcd=%p", $time, dut_lfsr_status, bcd_attempt), UVM_LOW);
                             end
                             else begin
                                 ATTEMPT_FAIL++;
-                                //`uvm_error(get_type_name(), $sformatf("[%0t] ---- ATTEMPT %0d STATUS MISMATCH ----", $time, attempt));
-                                // `uvm_info(get_type_name(), $sformatf("[%0t] LFSR status Mis-Match with SCB generated: DUT LFSR=%p, bcd=%p", $time, dut_lfsr_status, bcd_attempt), UVM_LOW);
+                                `uvm_error(get_type_name(), $sformatf("[%0t] ---- ATTEMPT %0d STATUS MISMATCH ----", $time, attempt));
+                                `uvm_info(get_type_name(), $sformatf("[%0t] LFSR status Mis-Match with SCB generated: DUT LFSR=%p, bcd=%p", $time, dut_lfsr_status, bcd_attempt), UVM_LOW);
                             end
                     end
                 end
@@ -368,7 +368,7 @@ class otp_scoreboard extends uvm_scoreboard;
                 if(first_otp_latch && vif.sb_cb.otp_latch)begin//for 1st latch only make it 0 after that till end of 3 attempts
                     lfsr_reg = lfsr_temp;
                     first_otp_latch = 0;
-                    //$display("[%0t] LFSR Generated Value Latched: %0h", $time, lfsr_reg);
+                    $display("[%0t] LFSR Generated Value Latched: %0h", $time, lfsr_reg);
  
                     convert_to_bcd(lfsr_reg[3:0],     lfsr_exp[0]);  // LSB
                     convert_to_bcd(lfsr_reg[7:4],     lfsr_exp[1]);

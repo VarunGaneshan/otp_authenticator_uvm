@@ -1,0 +1,20 @@
+var g_data = {
+c1488:[4,'user_in',[],,'1487',2,1,'\\/tb_top_sv_unit::otp_subscriber::ip_cg ','1477','/tb_top_sv_unit/otp_subscriber',[[],[2,'--','12',1,'illegal_digits'],[0,'1','58',,'valid_low'],[0,'1','8',,'valid_mid'],[0,'1','14',,'valid_high']],[]],
+c1489:[4,'otp_latch_transitions',[],,'1487',2,1,'\\/tb_top_sv_unit::otp_subscriber::ip_cg ','1477','/tb_top_sv_unit/otp_subscriber',[[],[0,'1','15',,'latch_0_to_1'],[0,'1','16',,'latch_1_to_0']],[]],
+c1490:[4,'user_latch_transitions',[],,'1487',2,1,'\\/tb_top_sv_unit::otp_subscriber::ip_cg ','1477','/tb_top_sv_unit/otp_subscriber',[[],[0,'1','41',,'latch_0_to_1'],[0,'1','40',,'latch_1_to_0']],[]],
+c1491:[5,'user_in_x_user_latch',['user_in','user_latch_transitions'],,'1487',2,1,'\\/tb_top_sv_unit::otp_subscriber::ip_cg ','1477','/tb_top_sv_unit/otp_subscriber',[[],[2,'--','0',,'latch_0_to_1_illegal'],[0,'1','8',,'latch_0_to_1_low'],[0,'1','8',,'latch_0_to_1_mid'],[0,'1','13',,'latch_0_to_1_high']],[[]]],
+c1493:[4,'lfsr_out',[],,'1492',1,1,'op_cg','1477','/tb_top_sv_unit/otp_subscriber',[[],[0,'1','95500',,'valid_low'],[0,'1','40499',,'valid_mid'],[0,'1','79000',,'valid_high'],[0,'1','54000',,'attempt_no[1]'],[0,'1','12500',,'attempt_no[2]'],[0,'1','14500',,'attempt_no[3]'],[0,'1','1000',,'locked'],[0,'1','3500',,'unlocked'],[0,'1','1000',,'expired'],[0,'1','43000',,'dash']
+,[0,'1','43000',,'attempt'],[0,'1','37501',,'off']],[]],
+c1494:[4,'user_out',[],,'1492',1,1,'op_cg','1477','/tb_top_sv_unit/otp_subscriber',[[],[0,'1','203499',,'valid_low'],[0,'1','51000',,'valid_mid'],[0,'1','41500',,'valid_high']],[]],
+c1495:[4,'cp_an',[],,'1492',1,1,'op_cg','1477','/tb_top_sv_unit/otp_subscriber',[[],[0,'1','86000',,'an[0]'],[0,'1','86000',,'an[1]'],[0,'1','86000',,'an[2]'],[0,'1','86000',,'an[3]']],[]],
+c2051:[4,'user_in',[],,'2050',2,1,'\\/tb_top_sv_unit::otp_subscriber::ip_cg ','2040','work.tb_top_sv_unit::otp_subscriber',[[],[2,'--','12',1,'illegal_digits'],[0,'1','58',,'valid_low'],[0,'1','8',,'valid_mid'],[0,'1','14',,'valid_high']],[]],
+c2052:[4,'otp_latch_transitions',[],,'2050',2,1,'\\/tb_top_sv_unit::otp_subscriber::ip_cg ','2040','work.tb_top_sv_unit::otp_subscriber',[[],[0,'1','15',,'latch_0_to_1'],[0,'1','16',,'latch_1_to_0']],[]],
+c2053:[4,'user_latch_transitions',[],,'2050',2,1,'\\/tb_top_sv_unit::otp_subscriber::ip_cg ','2040','work.tb_top_sv_unit::otp_subscriber',[[],[0,'1','41',,'latch_0_to_1'],[0,'1','40',,'latch_1_to_0']],[]],
+c2054:[5,'user_in_x_user_latch',['user_in','user_latch_transitions'],,'2050',2,1,'\\/tb_top_sv_unit::otp_subscriber::ip_cg ','2040','work.tb_top_sv_unit::otp_subscriber',[[],[2,'--','0',,'latch_0_to_1_illegal'],[0,'1','8',,'latch_0_to_1_low'],[0,'1','8',,'latch_0_to_1_mid'],[0,'1','13',,'latch_0_to_1_high']],[[]]],
+c2056:[4,'lfsr_out',[],,'2055',1,1,'op_cg','2040','work.tb_top_sv_unit::otp_subscriber',[[],[0,'1','95500',,'valid_low'],[0,'1','40499',,'valid_mid'],[0,'1','79000',,'valid_high'],[0,'1','54000',,'attempt_no[1]'],[0,'1','12500',,'attempt_no[2]'],[0,'1','14500',,'attempt_no[3]'],[0,'1','1000',,'locked'],[0,'1','3500',,'unlocked'],[0,'1','1000',,'expired'],[0,'1','43000',,'dash']
+,[0,'1','43000',,'attempt'],[0,'1','37501',,'off']],[]],
+c2057:[4,'user_out',[],,'2055',1,1,'op_cg','2040','work.tb_top_sv_unit::otp_subscriber',[[],[0,'1','203499',,'valid_low'],[0,'1','51000',,'valid_mid'],[0,'1','41500',,'valid_high']],[]],
+c2058:[4,'cp_an',[],,'2055',1,1,'op_cg','2040','work.tb_top_sv_unit::otp_subscriber',[[],[0,'1','86000',,'an[0]'],[0,'1','86000',,'an[1]'],[0,'1','86000',,'an[2]'],[0,'1','86000',,'an[3]']],[]],
+dummyEnd:0
+};
+processCovergroupsData(g_data);

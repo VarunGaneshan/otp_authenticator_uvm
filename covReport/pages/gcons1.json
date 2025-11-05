@@ -1,0 +1,7 @@
+var g_db_data = [
+{dummy:0},
+{name:'ip_cg',f:1,type:6,id:1482,tb:'10',h:'10',m:'0',hp:'100.00%',cov:['100.00%','G'],g:'100.00%',gp:['100.00%','G'],hdlPath:'/tb_top_sv_unit/otp_subscriber',parent:'1477'},
+{name:'op_cg',f:1,type:6,id:1492,tb:'19',h:'19',m:'0',hp:'100.00%',cov:['100.00%','G'],g:'100.00%',gp:['100.00%','G'],opts:[[],['merge_instance','auto(true)']],hdlPath:'/tb_top_sv_unit/otp_subscriber',parent:'1477'},
+{name:'ip_cg',f:1,type:6,id:2045,tb:'10',h:'10',m:'0',hp:'100.00%',cov:['100.00%','G'],g:'100.00%',gp:['100.00%','G'],hdlPath:'work.tb_top_sv_unit::otp_subscriber',parent:'2040'},
+{name:'op_cg',f:1,type:6,id:2055,tb:'19',h:'19',m:'0',hp:'100.00%',cov:['100.00%','G'],g:'100.00%',gp:['100.00%','G'],opts:[[],['merge_instance','true']],hdlPath:'work.tb_top_sv_unit::otp_subscriber',parent:'2040'}];
+processConsCovergroupsData(g_db_data);

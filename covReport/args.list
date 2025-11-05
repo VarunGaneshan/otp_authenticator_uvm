@@ -1,0 +1,5 @@
+-html
+coverage_excluded.ucdb
+-htmldir
+covReport
+-details

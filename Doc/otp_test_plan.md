@@ -1,1 +1,1 @@
-[Otp_Test_Plan]([https://docs.google.com/spreadsheets/d/13n_jXO4R42vS6skDMYdnwWZ1rU4DHtmCiyduO7Nio4U/edit?usp=sharing](https://docs.google.com/spreadsheets/d/1dmq_CHWmDZCZ0xavPU8Obs99BYIWQ6dWiNuon8Z9cIs/edit?gid=0#gid=0))
+[Otp_Test_Plan](https://docs.google.com/spreadsheets/d/1dmq_CHWmDZCZ0xavPU8Obs99BYIWQ6dWiNuon8Z9cIs/edit?gid=0#gid=0)
